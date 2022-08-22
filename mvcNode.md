@@ -250,3 +250,27 @@ trường hợp dữ liệu nhận là mảng thì duyệt mảng qua cú pháp:
 
         module.exports = mongoose.model('Course', Course);
  
+ # [CRUD] Update course : xử lý put qua form(form chỉ hỗ trợ post và get)
+ cài thư viện : npm install method-override   => mục đích là thêm method mà form không hỗ trợ thôi
+ tại index : var methodOverride = require('method-override')
+            app.use(methodOverride('_method'))
+tại action form : thêm ?_method=PUT sau link 
+ bây giờ thì có put rồi
+ sử dụng phương thức put thôi
+ để update tại controller : Course.updateOne({_id: req.params.id }(điều kiện tìm kiếm), req.body(dữ liệu đưa vào))   
+                .then(() => res.redirect('/me/stored/courses'))=> chuyển hướng
+
+
+# cách thêm function vào hbs : 
+app.engine(
+    'hbs',
+    handlebars.engine({
+        extname: '.hbs',
+        helpers: {
+            plus(a) {
+                return a+1;
+            }
+        }
+    }),
+);
+=> định nghĩa hàm trong index => trong hbs thì sử dụng hàm bằng cách {{tên_hàm biến1 biến2 biến_n}}
