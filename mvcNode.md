@@ -274,3 +274,47 @@ app.engine(
     }),
 );
 => định nghĩa hàm trong index => trong hbs thì sử dụng hàm bằng cách {{tên_hàm biến1 biến2 biến_n}}
+
+# [CRUD] Delete course :=> làm chức năng xóa thì nên hỏi xem người dùng có thật sự muốn xóa không(sợ bấm nhầm đó)
+delete(req, res,next) {
+        Course.deleteOne({_id: req.params.id })  =>  điều kiện 
+                .then(() => res.redirect('/me/stored/courses'))
+                .catch(next)
+    }
+
+có nhiều cách, với cách get thì chỉ cần đường link là đủ
+nên tạo một cái modal để hỏi ý kiến người dùng
+=> nếu muốn truyền đi bnagwf method=DELETE thì nên thêm 1 form  <form name="deleteForm" method="POST" action=""></form>
+set action theo sự kiện click vào btn xóa để thêm method, tạo thêm 1 đoạn js để làm điều này(thêm như trong file html thôi)
+# Soft delete: kỹ thuật xóa mềm
+    - delete (soft)
+    - restore
+    - Force delete (hard delete)
+sử dụng plugin : + cài đặt: npm install mongoose-delete
+                 + import vào models : var mongooseDelete = require('mongoose-delete');
+                 + sử dụng :
+                mongoose.plugin(slug)
+                Course.plugin(mongooseDelete, { deletedAt : true }); => khi mà 
+                thực hiện xóa thì nó thêm vao fthuoocj tính deleteAt(thời gian xóa)
+                để ghi đè các thuộc tính qua soft delete => Course.plugin(mongooseDelete,{ overrideMethods: 'all' ,deletedAt : true});
+                để nó cho phép sử dụng các thuộc tính như save, delete, restore như bên dưới
+                fluffy.save(function () {
+                    // mongodb: { deleted: false, name: 'Fluffy' }
+
+                    // note: you should invoke exactly delete() method instead of standard fluffy.remove()
+                    fluffy.delete(function () {
+                        // mongodb: { deleted: true, name: 'Fluffy', deletedAt: ISODate("2014-08-01T10:34:53.171Z")}
+
+                        fluffy.restore(function () {
+                            // mongodb: { deleted: false, name: 'Fluffy' }
+                        });
+                    });
+
+                });
+                + ngoài các thuộc tính mà nó sẽ căn lại của mongoose thì các thuộc tính khác như deleteOne,... vẫn giữ nguyên công việc
+
+# Deleted count documents : sử dụng promise.all([các promise]).then([trả về mảng các giá trị trả về của promise bên trong])
+{{#if deleteCount}}
+      <a href="/me/trash/courses"> <i class="fa-solid fa-trash"></i> Thùng rác : {{deleteCount}}</a>
+      {{/if}} => cú pháp if else trong hbs
+# "Select all" with checkbox : 
