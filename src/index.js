@@ -27,6 +27,16 @@ app.use(morgan('combined'));
 
 app.use(methodOverride('_method'))
 
+app.use('/coures',bacbaove)
+
+function bacbaove(req,res,next) {
+    if(['vethuong','vevip'].includes(req.query.ve)){
+        req.face = 'gach gach gach !!!'
+        return next()
+    }
+    res.status(403).json({message: 'Access Denined'})
+}
+
 //Template engine
 app.engine(
     'hbs',

@@ -317,4 +317,37 @@ sử dụng plugin : + cài đặt: npm install mongoose-delete
 {{#if deleteCount}}
       <a href="/me/trash/courses"> <i class="fa-solid fa-trash"></i> Thùng rác : {{deleteCount}}</a>
       {{/if}} => cú pháp if else trong hbs
-# "Select all" with checkbox : 
+# "Select all" with checkbox : cái này thì thêm js vào rồi get sự kiện ra mà làm
+à với lại Course.delete(trong này luôn là 1 object), hay deleteMany(cũng là 1 object)
+
+# Khái niệm middleware(phần mềm trung gian):
+-ý nghĩa:
+    phần mềm trung gian( đứng giữa các thành phần trong mô hình phần mềm)
+    Browser == request==> server(node) ==respon==> Browser
+    cơ bản middleware là phần mềm giữa các thành phần fe và be hoặc giữa các thành phần cảu fe và be
+-vai trò:
+    giống như bác bảo vệ:
+
+    nhà ===>Bác bảo vệ( middleware) : Sự kiện(soát vé) ==> nhà
+    1 soát vé (kiểm soát data: validation)
+    2 Cho phép vào (validation pass -> cho vào)
+    3 không cho vào ()
+    4 chỉnh sửa / thay đổi()
+
+    app.get('/path',sau này có bao nhiêu function thì nó coi là middleware hết)
+ ví dụ : app.get('/path',function(req,res,next) {
+    req.a= '12'
+    xử lý gì đó gọi hàm next thì nó chuyển qua function sau
+ },function(req,res,next) {
+    để nhận dữ liệu tại funtion này thì middleware phải gửi bằng req
+    nhận
+    const nhan = req.a => trả về '12'
+ })
+
+ sử dụng app.use(function middleware) thì nó sẽ áp dụng lên mọi request đều phải qua cái này
+ còn muốn phải qua 1 path thì mới vào thì app.use('/path',middleware) => chỉ khi vào path thì nó mới dung middleware này
+
+ -ứng dụng:  
+    Dựng chức năng xác thực( Authentication)
+    Dựng chức năng phân quyền(Authorization)
+    Chia sẻ các giá trị của biến tới tất cả các view

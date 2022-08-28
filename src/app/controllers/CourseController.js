@@ -59,12 +59,44 @@ class CourseController {
 
      //[POST] /course/handle-form-actions
      deleteMulti(req, res,next) {
-        const id = req.body
-        var ListId = new Array(id.length)
-        res.json(id)
-        // Course.delete({_id: req.params.id })   
-        //         .then(() => res.redirect('back'))
-        //         .catch(next)
+        const formValue = req.body
+        var ListId = new Array(formValue.courseIds.length)
+
+        function Id(id) {
+            this._id = id
+        }
+        for(let i = 0; i< formValue.courseIds.length;i++) {
+            ListId[i] = new Id(formValue.courseIds[i])
+        }
+        Course.delete({...ListId})   
+                .then(() => res.redirect('back'))
+                .catch(next)
+    }
+
+      //[POST] /course/handle-form-trash
+    handleTrash(req, res,next) {
+        const formValue = req.body
+        var ListId = new Array(formValue.courseIds.length)
+
+        function Id(id) {
+            this._id = id
+        }
+        for(let i = 0; i< formValue.courseIds.length;i++) {
+            ListId[i] = new Id(formValue.courseIds[i])
+        }
+
+        switch(formValue.action) {
+            case 'delete' :
+                Course.deleteMany({...ListId})   
+                .then(() => res.redirect('back'))
+                .catch(next)
+                break;
+            case 'restore' : 
+                Course.restore({...ListId})
+                    .then(() => res.redirect('back'))
+                    .catch(next)
+
+        }
     }
 
     //[DELETE] /course/:id/destroy
