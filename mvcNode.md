@@ -351,3 +351,52 @@ sử dụng plugin : + cài đặt: npm install mongoose-delete
     Dựng chức năng xác thực( Authentication)
     Dựng chức năng phân quyền(Authorization)
     Chia sẻ các giá trị của biến tới tất cả các view
+
+# Sort middleware :
+cách để đẩy một biến từ middleware sang view thì gán res.locals.biến_muốn_đẩy = giá trị muốn đẩy
+tạo 1 file SortMiddleware.js :
+module.exports = function SortMiddleware(req,res,next) {
+    
+
+    res.locals._sort = {
+        enable: false,
+        type: 'default'
+    }
+
+    if(req.query.hasOwnProperty('_sort')) {
+        Object.assign(res.locals._sort, {
+            enable : true,
+            type: req.query.type,
+            column: req.query.column
+        })
+
+    }
+
+    next() 
+    
+}
+trong index thêm middleware vào bằng lệnh : const SortMiddleware = require('./app/middlewares/SortMiddleware')
+sử dụng : app.use(SortMiddleware) => áp đụng với mọi req
+định nghĩa thêm 1 func:
+app.engine(
+    'hbs',
+    handlebars.engine({
+        extname: '.hbs',
+        helpers: {
+            plus(a) {
+                return a+1;
+            },
+            sortable(field, sort) {
+                let icon;
+                // if(sort == 'desc')
+
+
+                return `<a href="?_sort&column=name&type=desc"><i class="fa-solid fa-sort"></i></a>`
+            }
+        }
+    }),
+);
+thêm func sortable vào view thfi tahy vì nó in ra một element thì nó trả ra 1 chuỗi => để giải quyết thfi thay vì dùng 2
+{{}} thì ta {{{gọi hàm trong này}}} => nó sẽ không mã hóa các ký tự đặc biệt (có vấn đề về bảo mật= hacker có thể chèn mã của mình vào) 
+
+# Autoincrement _id field

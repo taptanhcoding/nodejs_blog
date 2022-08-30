@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const app = express();
 const port = 3000;
 
+const SortMiddleware = require('./app/middlewares/SortMiddleware')
 
 const route = require('./routes');
 const db = require('./config/db')
@@ -27,15 +28,8 @@ app.use(morgan('combined'));
 
 app.use(methodOverride('_method'))
 
-app.use('/coures',bacbaove)
+app.use(SortMiddleware)
 
-function bacbaove(req,res,next) {
-    if(['vethuong','vevip'].includes(req.query.ve)){
-        req.face = 'gach gach gach !!!'
-        return next()
-    }
-    res.status(403).json({message: 'Access Denined'})
-}
 
 //Template engine
 app.engine(
@@ -45,6 +39,20 @@ app.engine(
         helpers: {
             plus(a) {
                 return a+1;
+            },
+            sortable(field, sort) {
+                const sortType = field === sort.column ? sort.type : 'default';
+                let icons = {
+                    default : 'fa-solid fa-sort',
+                    desc : 'fa-solid fa-arrow-down-wide-short',
+                    asc : 'fa-solid fa-arrow-down-short-wide'
+                }
+                let types = {
+                    default : 'desc',
+                    asc : 'default',
+                    desc : 'asc'
+                }
+                return `<a href="?_sort&column=${field}&type=${types[sortType]}"><i class='${icons[sortType]}'></i></a>`
             }
         }
     }),
